@@ -1,11 +1,8 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.views.generic import CreateView
 from django.urls import reverse_lazy
-from .forms import CreationForm
-from django.views.generic import TemplateView
+from django.views.generic import CreateView
 
-import datetime as dt
+from .forms import CreationForm
+
 
 class SignUp(CreateView):
     form_class = CreationForm

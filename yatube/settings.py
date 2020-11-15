@@ -97,5 +97,5 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 LOGIN_URL = "/auth/login/"
-LOGIN_REDIRECT_URL = "index" 
-EMAIL_BACKEND = 'django.core.mail.backends.XXX' 
+LOGIN_REDIRECT_URL = "index"
+EMAIL_BACKEND = 'django.core.mail.backends.XXX'
