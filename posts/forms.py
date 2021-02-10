@@ -9,5 +9,5 @@ class PostForm(ModelForm):
         fields = ('text', 'group')
         labels = {
             'group': 'Сообщество',
-            'text': 'Текст записи'
+            'text': 'Текст публикации'
         }
