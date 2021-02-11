@@ -64,22 +64,41 @@ def post_view(request, username, post_id):
     return render(request, 'post.html', context)
 
 
+# @login_required
+# def post_edit(request, username, post_id):
+#     if request.user.username != username:
+#         return redirect(reverse('post', username, post_id))
+#     post = get_object_or404(Post, id=post_id)
+#     if request.method == 'POST':
+#         form = PostForm(request.POST, instance=post)
+#         if form.is_valid():
+#             form.save()
+#             return redirect(reverse(post, username, post_id))
+#         return redirect(reverse(post, username, post_id))
+#         form_with_post = PostForm(instance=post)
+#         if request.method == 'GET':
+#             context = {
+#                 'form': form_with_post,
+#                 'edit': True,
+#                 'post_id': post.id
+#             }
+#             return render(request, 'post_edit.html', context)
+
+
 @login_required
 def post_edit(request, username, post_id):
-    if request.user.username != username:
-        return redirect(reverse('post', username, post_id))
-    post = get_object_or404(Post, id=post_id)
-    if request.method == 'POST':
-        form = PostForm(request.POST, instance=post)
-        if form.is_valid():
-            form.save()
-            return redirect(reverse(post, username, post_id))
-        return redirect(reverse(post, username, post_id))
-        form_with_post = PostForm(instance=post)
-        if request.method == 'GET':
-            context = {
-                'form': form_with_post,
-                'edit': True,
-                'post_id': post.id
-            }
-            return render(request, 'post_edit.html', context)
+    author = get_object_or_404(User, username=username)
+    item = get_object_or_404(Post, id=post_id)
+    if request.user != author:
+        raise Http404('Вы не можете редактировать эту публикацию')
+    else:
+        if request.method == 'POST':
+            form = PostForm(request.POST, instance=item)
+            if form.is_valid():
+                edit_item = form.save(commit=False)
+                item.text = edit_item.text
+                item.group = edit_item.group
+                item.save()
+                return redirect('posts:post', item.author, item.id)
+    form = PostForm(instance=item)
+    return render(request, 'post_edit.html', {'form': form, })
