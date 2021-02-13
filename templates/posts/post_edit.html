@@ -1,0 +1,32 @@
+{% extends "users_base.html" %}
+{% block title %}Редактор записи{% endblock %}
+{% block content %}
+{% load user_filters %}
+<div class="row justify-content-center">
+    <div class="col-md-8 p-5">
+        <div class="card">
+            <div class="card-header">Редактор записи</div>
+            <div class="card-body">
+
+              {% for error in form.errors %}
+                  <div class="alert alert-danger" role="alert">
+                      {{ error|escape }}
+                  </div>
+                {% endfor %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.group }}<br>
+                    {{ form.text }}<br>
+
+                    {% if field.help_text %}
+                    <small id="{{ field.id_for_label }}-help" class="form-text text-muted" style="margin-top:10px">{{ field.help_text|safe }}</small>
+                    {% endif %}
+
+                    <button type="submit" class="btn btn-primary" style="margin-top:16px">Сохранить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -46,33 +46,27 @@ def profile(request, username):
         'posts_latest': posts_latest,
         'author': author
     }
-    return render(request, 'profile.html', context)
+    return render(request, 'posts/profile.html', context)
  
  
 def post_view(request, username, post_id):
     author = get_object_or_404(User, username=username)
-    post = get_object_or_404(Post, id=post_id, author=author)
+    post = get_object_or_404(Post, id=post_id, author_id=author.id)
     context = {
         'author': author,
         'post': post        
     }
-    return render(request, 'post.html', context)
+    return render(request, 'posts/post.html', context)
 
 
 @login_required
 def post_edit(request, username, post_id):
-    author = get_object_or_404(User, username=username)
-    item = get_object_or_404(Post, id=post_id)
-    if request.user != author:
-        raise Http404('Вы не можете редактировать эту публикацию')
-    else:
-        if request.method == 'POST':
-            form = PostForm(request.POST, instance=item)
-            if form.is_valid():
-                edit_item = form.save(commit=False)
-                item.text = edit_item.text
-                item.group = edit_item.group
-                item.save()
-                return redirect('posts:post', item.author, item.id)
-    form = PostForm(instance=item)
-    return render(request, 'post_edit.html', {'form': form, })
+    if username != request.user.username:
+        return redirect('posts:post', username, post_id)
+    post = get_object_or_404(Post, id=post_id, author_id=author.id)
+    form = PostForm(request.POST or None, files=request.FILES or None, 
+                    instance=post)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        return redirect('posts:post', username, post_id)
+    return render(request, 'posts/post_edit.html', {'post': post, 'form': form})
